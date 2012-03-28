@@ -1,3 +1,23 @@
 #!/usr/bin/env ruby
+lib_path = File.expand_path("./lib")
+$LOAD_PATH.unshift lib_path unless $LOAD_PATH.include?(lib_path)
 
 require "bind_log_analyzer"
+
+@filename = 'test_file.log'
+    @doc = <<EOF
+28-Mar-2012 15:47:46.240 client 127.0.0.1#60571: query: web.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:46.320 client 127.0.0.1#36756: query: web.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:46.330 client 127.0.0.1#46627: query: web.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:46.448 client 127.0.0.1#35634: query: web.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:46.462 client 127.0.0.1#59687: query: web.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:47.474 client 127.0.0.1#48397: query: jboss2.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:47.648 client 127.0.0.1#58440: query: jboss2.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:47.902 client 127.0.0.1#44378: query: jboss2.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:47:47.911 client 127.0.0.1#58480: query: jboss2.drwolf.it IN A + (127.0.0.1)
+28-Mar-2012 15:48:07.097 client 192.168.100.16#46921: query: 1.100.168.192.in-addr.arpa IN PTR + (192.168.100.1)
+EOF
+    
+File.open(@filename, 'w') { |f| f.write(@doc) } unless FileTest.exists?(@filename)
+@base = BindLogAnalyzer::Base.new(@filename)
+@base.print_lines
