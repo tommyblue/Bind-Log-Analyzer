@@ -1,5 +1,6 @@
 require "bind_log_analyzer/version"
 
 module BindLogAnalyzer
-  # Your code goes here...
+  class Base
+  end
 end
