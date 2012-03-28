@@ -7,8 +7,8 @@ Gem::Specification.new do |s|
   s.version     = BindLogAnalyzer::VERSION
   s.authors     = ["Tommaso Visconti"]
   s.email       = ["tommaso.visconti@gmail.com"]
-  s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
+  s.homepage    = "https://github.com/tommyblue/Bind-Log-Analyzer"
+  s.summary     = %q{Log analysis and SQL storage for Bind DNS server}
   s.description = %q{TODO: Write a gem description}
 
   s.rubyforge_project = "bind_log_analyzer"
