@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+require "bind_log_analyzer"
