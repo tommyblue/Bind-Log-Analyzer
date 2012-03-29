@@ -8,9 +8,9 @@ require 'optparse'
 optparse = OptionParser.new do |opts|
   # Set a banner, displayed at the top
   # of the help screen.
-  opts.banner = "Usage: ./#{File.basename(__FILE__)} -f FILENAME"
+  opts.banner = "Usage: ./#{File.basename(__FILE__)} -f FILENAME | --help"
 
-  opts.on( '-f', '--file', "Indicates the log file to parse. It's mandatory" ) do |f|
+  opts.on( '-f', '--file FILE', "Indicates the log file to parse. It's mandatory" ) do |f|
     @filename = f
   end
 
@@ -21,7 +21,12 @@ optparse = OptionParser.new do |opts|
   end
 end
 
+optparse.parse!
+
 if @filename
   @base = BindLogAnalyzer::Base.new(nil, @filename)
   @base.analyze
+else
+  puts optparse.banner
+  exit -1
 end
