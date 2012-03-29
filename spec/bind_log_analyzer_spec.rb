@@ -5,16 +5,9 @@ describe BindLogAnalyzer do
     # Create a test logfile
     @filename = 'test_file.log'
     @doc = <<EOF
-28-Mar-2012 15:47:46.240 client 127.0.0.1#60571: query: web.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:46.320 client 127.0.0.1#36756: query: web.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:46.330 client 127.0.0.1#46627: query: web.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:46.448 client 127.0.0.1#35634: query: web.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:46.462 client 127.0.0.1#59687: query: web.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:47.474 client 127.0.0.1#48397: query: jboss2.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:47.648 client 127.0.0.1#58440: query: jboss2.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:47.902 client 127.0.0.1#44378: query: jboss2.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:47:47.911 client 127.0.0.1#58480: query: jboss2.drwolf.it IN A + (127.0.0.1)
-28-Mar-2012 15:48:07.097 client 192.168.100.16#46921: query: 1.100.168.192.in-addr.arpa IN PTR + (192.168.100.1)
+28-Mar-2012 16:48:32.411 client 192.168.10.37#60303: query: github.com IN A + (192.168.10.1)
+28-Mar-2012 16:48:32.412 client 192.168.10.201#60303: query: google.com IN AAAA + (192.168.10.1)
+28-Mar-2012 16:48:32.898 client 192.168.10.114#53309: query: www.nasa.gov IN A + (192.168.10.1)
 EOF
     
     File.open(@filename, 'w') { |f| f.write(@doc) } unless FileTest.exists?(@filename)
@@ -58,16 +51,21 @@ EOF
   end
 
   it "should correctly parse a line" do
-    line = "28-Mar-2012 15:47:46.240 client 127.0.0.1#60571: query: web.drwolf.it IN A + (127.0.0.1)"
+    line = "28-Mar-2012 16:48:32.412 client 192.168.10.201#60303: query: google.com IN AAAA + (192.168.10.1)"
     test_line = {
       date: "28-Mar-2012",
-      time: "15:47:46",
-      client: "127.0.0.1",
-      query: "web.drwolf.it",
-      type: "A",
-      server: "127.0.0.1"
+      time: "16:48:32",
+      client: "192.168.10.201",
+      query: "google.com",
+      type: "AAAA",
+      server: "192.168.10.1"
     }
     parsed_line = @base.parse_line(line)
     parsed_line.should == test_line
+  end
+
+  it "should be connected after connect() is called" do
+    @base.connect
+    @base.connected?.should == true
   end
 end

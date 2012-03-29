@@ -1,8 +1,11 @@
 module BindLogAnalyzer
   class Base
-    attr_reader :log_filename
+    include BindLogAnalyzer::Connector
+
+    attr_reader :log_filename, :database_confs
     
-    def initialize(logfile = nil)
+    def initialize(database_confs, logfile = nil)
+      @database_confs = database_confs
       self.logfile = logfile if logfile
     end
 
