@@ -1,0 +1,7 @@
+development:
+  adapter: mysql2
+  database: bindlogsql
+  host: localhost
+  port: 3306
+  username: root
+  password: 

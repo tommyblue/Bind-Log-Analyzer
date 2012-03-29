@@ -11,5 +11,8 @@ require "bind_log_analyzer"
 EOF
     
 File.open(@filename, 'w') { |f| f.write(@doc) } unless FileTest.exists?(@filename)
-@base = BindLogAnalyzer::Base.new(@filename)
-@base.print_lines
+
+@filename = "query.log"
+
+@base = BindLogAnalyzer::Base.new(nil, @filename)
+@base.analyze
