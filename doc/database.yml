@@ -1,4 +1,4 @@
-development:
+database:
   adapter: mysql2
   database: bindlogsql
   host: localhost

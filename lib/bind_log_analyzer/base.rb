@@ -1,3 +1,4 @@
+require 'bind_log_analyzer/exceptions'
 require 'bind_log_analyzer/connector'
 require 'models/log'
 
@@ -8,14 +9,29 @@ module BindLogAnalyzer
     attr_reader :log_filename, :database_confs
     
     def initialize(database_confs = nil, logfile = nil, enable_logs = true)
-      unless database_confs
-        filename = File.join(File.dirname(__FILE__), '..', '..', 'config', 'databases.yml')
-        database_confs = YAML::load(File.open(filename))['development'] if FileTest.exists?(filename)
+      if database_confs
+        if database_confs.instance_of?(Hash)
+          @database_confs = database_confs
+        else
+          # Load the yaml file
+          if FileTest.exists?(database_confs)
+            @database_confs = YAML::load(File.open(database_confs))['database']
+          else
+            raise BindLogAnalyzer::DatabaseConfsNotValid, "The indicated YAML file doesn't exist or is invalid"
+          end
+        end
+      else
+        # Tries to find the yaml file or prints an error
+        filename = File.join(File.dirname(__FILE__), 'database.yml')
+        if FileTest.exists?(filename)
+            @database_confs = YAML::load(File.open(filename))['database']
+        else
+          raise BindLogAnalyzer::DatabaseConfsNotValid, "Can't find valid database configurations"
+        end
       end
       
-      @database_confs = database_confs
       self.logfile = logfile if logfile
-      setup_db(database_confs, enable_logs)
+      setup_db(@database_confs, enable_logs)
     end
 
     def logfile=(logfile)

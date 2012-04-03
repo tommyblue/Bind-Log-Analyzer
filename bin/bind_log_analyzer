@@ -5,26 +5,71 @@ require 'optparse'
 
 @filename = nil
 
+@database_confs = nil
+
+@db_yaml = nil
+@db_host = nil
+@db_database = nil
+@db_port = nil
+@db_username = nil
+@db_password = nil
+
 optparse = OptionParser.new do |opts|
   # Set a banner, displayed at the top
   # of the help screen.
-  opts.banner = "Usage: ./#{File.basename(__FILE__)} -f FILENAME | --help"
-
-  opts.on( '-f', '--file FILE', "Indicates the log file to parse. It's mandatory" ) do |f|
-    @filename = f
-  end
+  opts.banner = "Usage: ./#{File.basename(__FILE__)} (--file|-f FILENAME [--database|-d database_name] [--config|-c database_yaml_configurations] [--host|-h database_hostname] [--port|-p database_port] [--user|-u database_username] [--password|-p database_password] | --help|-h)"
 
   # This displays the help screen
   opts.on( '-h', '--help', 'Display this screen' ) do
     puts opts
     exit
   end
+
+  opts.on( '-f', '--file FILE', "Indicates the log file to parse. It's mandatory" ) do |opt|
+    @filename = opt
+  end
+
+  opts.on( '-c', '--config', 'A yaml file containing the database configurations under the "database" entry' ) do |opt|
+    @db_yaml = opt
+  end
+
+  opts.on( '-d', '--database', 'The database name to save the logs' ) do |opt|
+    @db_database = opt
+  end
+
+  opts.on( '-h', '--host', 'The address (IP, hostname or path) of the database' ) do |opt|
+    @db_host = opt
+  end
+
+  opts.on( '-P', '--port', 'The port of the database' ) do |opt|
+    @db_port = opt
+  end
+
+  opts.on( '-u', '--user', 'The username to be used to connect to the database' ) do |opt|
+    @db_username = opt
+  end
+
+  opts.on( '-p', '--password', 'The password of the user' ) do |opt|
+    @db_password = opt
+  end
 end
 
 optparse.parse!
 
+if @db_yaml
+  @database_confs = @db_yaml
+elsif @db_username || @db_password || @db_host || @db_port || @db_database
+  @database_confs = {
+      username: @db_username,
+      password: @db_password,
+      host:     @db_host,
+      port:     @db_port,
+      database: @db_database
+    }
+end
+
 if @filename
-  @base = BindLogAnalyzer::Base.new(nil, @filename)
+  @base = BindLogAnalyzer::Base.new(@database_confs, @filename)
   @base.analyze
 else
   puts optparse.banner
