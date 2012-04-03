@@ -32,7 +32,7 @@ task :build do
 end
  
 task :release => :build do
-  system "gem push bind_log_analyzer-#{BindLogAnalyzer::VERSION}"
+  system "gem push pkg/bind_log_analyzer-#{BindLogAnalyzer::VERSION}"
 end
 
 namespace :db do
