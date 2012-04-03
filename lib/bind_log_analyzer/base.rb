@@ -1,4 +1,5 @@
 require 'bind_log_analyzer/connector'
+require 'models/log'
 
 module BindLogAnalyzer
   class Base

@@ -1,20 +1,7 @@
 {
   "RSpec": {
     "coverage": {
-      "/home/drwolf/Devel/bind_log_analyzer/db/migrate/20120329151738_create_logs.rb": [
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
-        null,
-        null,
-        null
-      ]
     },
-    "timestamp": 1333029205
+    "timestamp": 1333444500
   }
 }
