@@ -8,7 +8,7 @@ module BindLogAnalyzer
 
     attr_reader :log_filename, :database_confs
     
-    def initialize(database_confs = nil, logfile = nil, enable_logs = true)
+    def initialize(database_confs = nil, logfile = nil, setup_database = false, log_level = 0)
       if database_confs
         if database_confs.instance_of?(Hash)
           @database_confs = database_confs
@@ -30,8 +30,9 @@ module BindLogAnalyzer
         end
       end
       
+      @stored_queries = 0
       self.logfile = logfile if logfile
-      setup_db(@database_confs, enable_logs)
+      setup_db(@database_confs, setup_database, log_level)
     end
 
     def logfile=(logfile)
@@ -64,24 +65,23 @@ module BindLogAnalyzer
       end
     end
 
-    def print_lines
-      File.open(@log_filename).each_line do |l|
-        puts l
-      end
-    end
-
     def store_query(query)
       log = Log.new(query)
-      log.save
+      @stored_queries += 1 if log.save
     end
 
     def analyze
       return false unless @log_filename
       
+      lines = 0
       File.new(@log_filename).each do |line|
         query = self.parse_line(line)
-        self.store_query(query) if query
+        if query
+          self.store_query(query)
+          lines += 1
+        end
       end
+      puts "Analyzed #{lines} lines and correctly stored #{@stored_queries} logs"
     end
   end
 end

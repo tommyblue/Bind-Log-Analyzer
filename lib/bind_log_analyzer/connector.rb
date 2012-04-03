@@ -4,15 +4,31 @@ require 'logger'
 module BindLogAnalyzer
   module Connector
 
-    def setup_db(database_params, enable_logs = true)
+    def setup_db(database_params, setup_database = false, log_level = 0)
       @database_params = database_params
+      
       self.connect
+
+      migrate_tables if setup_database
+
       self.load_environment
-      if enable_logs
+      if log_level > 0
+        
+        log_level_class = {
+          1 => Logger::WARN,
+          2 => Logger::INFO,
+          3 => Logger::DEBUG
+        }
+
         log = Logger.new STDOUT
-        log.level = Logger::WARN
+        log.level = log_level_class[log_level]
         ActiveRecord::Base.logger = log
       end
+    end
+
+    def migrate_tables
+      ActiveRecord::Migration.verbose = true
+      ActiveRecord::Migrator.migrate './db/migrate'
     end
 
     def connect

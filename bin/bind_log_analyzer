@@ -4,10 +4,11 @@ require "bind_log_analyzer"
 require 'optparse'
 
 @filename = nil
-
+@log_level = 0
 @database_confs = nil
-
+@setup_database = false
 @db_yaml = nil
+@db_adapter = 'mysql2'
 @db_host = nil
 @db_database = nil
 @db_port = nil
@@ -17,7 +18,7 @@ require 'optparse'
 optparse = OptionParser.new do |opts|
   # Set a banner, displayed at the top
   # of the help screen.
-  opts.banner = "Usage: ./#{File.basename(__FILE__)} (--file|-f FILENAME [--database|-d database_name] [--config|-c database_yaml_configurations] [--host|-h database_hostname] [--port|-p database_port] [--user|-u database_username] [--password|-p database_password] | --help|-h)"
+  opts.banner = "Usage: ./#{File.basename(__FILE__)} (--file|-f FILENAME [--setup|-s] [--verbose|-v (1|2|3)] [--database|-d database_name] [--config|-c database_yaml_configurations] [--host|-H database_hostname] [--port|-p database_port] [--user|-u database_username] [--password|-p database_password] | --help|-h)"
 
   # This displays the help screen
   opts.on( '-h', '--help', 'Display this screen' ) do
@@ -25,31 +26,51 @@ optparse = OptionParser.new do |opts|
     exit
   end
 
-  opts.on( '-f', '--file FILE', "Indicates the log file to parse. It's mandatory" ) do |opt|
+  opts.on( '-v', '--verbose LEVEL', "Enables verbose output. Use level 1 for WARN, 2 for INFO and 3 for DEBUG" ) do |opt|
+    case opt
+    when 1
+      @log_level = 1
+    when 2
+      @log_level = 2
+    when 3
+      @log_level = 3
+    end
+  end
+
+
+  opts.on( '-s', '--setup', "Creates the needed tables in the database." ) do |opt|
+    @setup_database = true
+  end
+
+  opts.on( '-f', '--file FILE', "Indicates the log file to parse. It's mandatory." ) do |opt|
     @filename = opt
   end
 
-  opts.on( '-c', '--config', 'A yaml file containing the database configurations under the "database" entry' ) do |opt|
+  opts.on( '-c', '--config CONFIG', 'A yaml file containing the database configurations under the "database" entry' ) do |opt|
     @db_yaml = opt
   end
 
-  opts.on( '-d', '--database', 'The database name to save the logs' ) do |opt|
+  opts.on( '-a', '--adapter ADAPTER', 'The database name to save the logs' ) do |opt|
+    @db_adapter = opt
+  end
+
+  opts.on( '-d', '--database DATABASE', 'The database name to save the logs' ) do |opt|
     @db_database = opt
   end
 
-  opts.on( '-h', '--host', 'The address (IP, hostname or path) of the database' ) do |opt|
+  opts.on( '-H', '--host HOST', 'The address (IP, hostname or path) of the database' ) do |opt|
     @db_host = opt
   end
 
-  opts.on( '-P', '--port', 'The port of the database' ) do |opt|
+  opts.on( '-P', '--port PORT', 'The port of the database' ) do |opt|
     @db_port = opt
   end
 
-  opts.on( '-u', '--user', 'The username to be used to connect to the database' ) do |opt|
+  opts.on( '-u', '--user USER', 'The username to be used to connect to the database' ) do |opt|
     @db_username = opt
   end
 
-  opts.on( '-p', '--password', 'The password of the user' ) do |opt|
+  opts.on( '-p', '--password PASSWORD', 'The password of the user' ) do |opt|
     @db_password = opt
   end
 end
@@ -60,6 +81,7 @@ if @db_yaml
   @database_confs = @db_yaml
 elsif @db_username || @db_password || @db_host || @db_port || @db_database
   @database_confs = {
+      adapter:  @db_adapter,
       username: @db_username,
       password: @db_password,
       host:     @db_host,
@@ -69,7 +91,7 @@ elsif @db_username || @db_password || @db_host || @db_port || @db_database
 end
 
 if @filename
-  @base = BindLogAnalyzer::Base.new(@database_confs, @filename)
+  @base = BindLogAnalyzer::Base.new(@database_confs, @filename, @setup_database, @log_level)
   @base.analyze
 else
   puts optparse.banner
