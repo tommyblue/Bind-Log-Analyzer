@@ -187,6 +187,17 @@ rvm use $BLA_RVM_GEMSET
 bind_log_analyzer --config $BLA_DB_FILE --file $1
 </code></pre>
 
+<h2>Performance</h2>
+
+<p>On a 1.6 Ghz Intel Core i5 with SSD SATA2 disk, using Ruby-1.9.3-p125 and MySQL 5.5.15, this is the performance:</p>
+
+<pre class="code ruby"><code>~$ time bind_log_analyzer -f query.log -c database.yml   
+Analyzed 319758 lines and correctly stored 319758 logs
+bind_log_analyzer -f query.log -c database.yml  322,44s user 22,90s system 76% cpu 7:33,17 total
+</code></pre>
+
+<p>which is equivalent to ±706 query/sec.</p>
+
 <h2>To do</h2>
 
 <ul>
@@ -195,7 +206,7 @@ bind_log_analyzer --config $BLA_DB_FILE --file $1
 </div></div>
     
     <div id="footer">
-  Generated on Tue Apr  3 16:59:15 2012 by 
+  Generated on Tue Apr  3 17:01:09 2012 by 
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.7.5 (ruby-1.9.3).
 </div>
