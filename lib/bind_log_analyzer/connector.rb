@@ -28,7 +28,8 @@ module BindLogAnalyzer
 
     def migrate_tables
       ActiveRecord::Migration.verbose = true
-      ActiveRecord::Migrator.migrate File.dirname(__FILE__) + '../../db/migrate'
+      migrations_dir = File.join(File.dirname(__FILE__), '..', '..', 'db/migrate')
+      ActiveRecord::Migrator.migrate migrations_dir
     end
 
     def connect
