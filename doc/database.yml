@@ -1,6 +1,6 @@
 database:
   adapter: mysql2
-  database: bindlogsql
+  database: bindloganalyzer
   host: localhost
   port: 3306
   username: root

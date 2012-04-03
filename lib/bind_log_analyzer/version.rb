@@ -1,3 +1,3 @@
 module BindLogAnalyzer
-  VERSION = "0.0.9.pre"
+  VERSION = "0.1.0"
 end

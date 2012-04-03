@@ -28,15 +28,14 @@ optparse = OptionParser.new do |opts|
 
   opts.on( '-v', '--verbose LEVEL', "Enables verbose output. Use level 1 for WARN, 2 for INFO and 3 for DEBUG" ) do |opt|
     case
-    when 1 === opt
+    when 1 === opt.to_i
       @log_level = 1
-    when 2 === opt
+    when 2 === opt.to_i
       @log_level = 2
-    when opt >= 3
+    when opt.to_i >= 3
       @log_level = 3
     end
   end
-
 
   opts.on( '-s', '--setup', "Creates the needed tables in the database." ) do |opt|
     @setup_database = true
