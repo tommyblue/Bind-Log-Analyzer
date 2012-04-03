@@ -121,6 +121,16 @@ The script **/usr/local/bin/update_bind_log_analyzer.sh** can be wherever you pr
     rvm use $BLA_RVM_GEMSET
     bind_log_analyzer --config $BLA_DB_FILE --file $1
 
+## Performance
+
+On a 1.6 Ghz Intel Core i5 with SSD SATA2 disk, using Ruby-1.9.3-p125 and MySQL 5.5.15, this is the performance:
+
+    ~$ time bind_log_analyzer -f query.log -c database.yml   
+    Analyzed 319758 lines and correctly stored 319758 logs
+    bind_log_analyzer -f query.log -c database.yml  322,44s user 22,90s system 76% cpu 7:33,17 total
+    
+which is equivalent to ±706 query/sec.
+
 ## To do
 
 - Add a web interface to show the queries (with awesome graphs, obviously :)
