@@ -1,3 +1,4 @@
 module BindLogAnalyzer
-  VERSION = "0.1.0"
+  # @return [String] The version of the gem
+  VERSION = "0.1.1"
 end

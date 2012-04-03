@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.7.5
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" media="screen" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  relpath = '';
+  if (relpath != '') relpath += '/';
+</script>
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <script type="text/javascript" charset="utf-8">
+      if (window.top.frames.main) document.body.className = 'frames';
+    </script>
+    
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html" title="Index">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+  
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a id="class_list_link" href="#">Class List</a>
+  
+    <a id="method_list_link" href="#">Method List</a>
+  
+    <a id="file_list_link" href="#">File List</a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+    
+    <iframe id="search_frame"></iframe>
+    
+    <div id="content"><div id='filecontents'><h1>Bind Log Analyzer</h1>
+
+<p>Simple analysis and SQL storage for Bind DNS server&#39;s logs</p>
+
+<h2>Requirements</h2>
+
+<p>This gem was tested with:</p>
+
+<ul>
+<li>ruby-1.9.3-p125</li>
+<li>rubygem (1.8.15)</li>
+<li>bundler (1.0.21)</li>
+<li>activerecord (3.2.2)</li>
+</ul>
+
+<h2>Installation</h2>
+
+<p>Just install the gem:</p>
+
+<pre class="code ruby"><code><span class='id identifier rubyid_gem'>gem</span> <span class='id identifier rubyid_install'>install</span> <span class='id identifier rubyid_bind_log_analyzer'>bind_log_analyzer</span>
+</code></pre>
+
+<p>The gem requires <strong>active_record</strong> but you probably need to install the right adapter. As example, if you&#39;ll use MySQL, install the <strong>mysql2</strong> gem.</p>
+
+<h2>Configuration</h2>
+
+<h3>Bind</h3>
+
+<p>To configure <strong>Bind</strong> add these lines to <em>/etc/bind/named.conf.options</em> (or whatever your s.o. and bind installation require)</p>
+
+<pre class="code ruby"><code>logging{
+    channel &quot;querylog&quot; {
+            file &quot;/var/log/bind/query.log&quot;;
+            print-time yes;
+    };
+
+    category queries { querylog; };
+};
+</code></pre>
+
+<p>Restart bind and make sure than the <em>query.log</em> file contains lines as this:</p>
+
+<pre class="code ruby"><code>28-Mar-2012 16:48:19.694 client 192.168.10.38#58767: query: www.github.com IN A + (192.168.10.1)
+</code></pre>
+
+<p>or the regexp will fail :(</p>
+
+<h3>Database</h3>
+
+<p>To store the logs you can use every database supported by ActiveRecord. Just create a database and a user with the right privileges. You can provide the -s flag to <em>BindLogAnalyzer</em> to make it create the table. Otherwise create it by yourself.
+This is the MySQL CREATE TABLE syntax:</p>
+
+<pre class="code ruby"><code>CREATE TABLE `logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` datetime NOT NULL,
+  `client` varchar(255) NOT NULL,
+  `query` varchar(255) NOT NULL,
+  `q_type` varchar(255) NOT NULL,
+  `server` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+</code></pre>
+
+<h2>Usage</h2>
+
+<p>Use the provided --help to get various options available. This is the default help:</p>
+
+<pre class="code ruby"><code>-h, --help                       Display this screen
+-v, --verbose LEVEL              Enables verbose output. Use level 1 for WARN, 2 for INFO and 3 for DEBUG
+-s, --setup                      Creates the needed tables in the database.
+-f, --file FILE                  Indicates the log file to parse. It's mandatory.
+-c, --config CONFIG              A yaml file containing the database configurations under the &quot;database&quot; entry
+-a, --adapter ADAPTER            The database name to save the logs
+-d, --database DATABASE          The database name to save the logs
+-H, --host HOST                  The address (IP, hostname or path) of the database
+-P, --port PORT                  The port of the database
+-u, --user USER                  The username to be used to connect to the database
+-p, --password PASSWORD          The password of the user
+</code></pre>
+
+<p>There&#39;s only one mandatory argument which is <strong>--file FILE</strong>. With this flag you pass the Bind log file to analyze to <em>BindLogAnalyzer</em>.</p>
+
+<p>The first time you launch <em>BindLogAnalyzer</em> you can use the <strong>-s|--setup</strong> flag to make it create the table (using ActiveRecord::Migration).
+The database credentials can be provided using the needed flags or creating a YAML file containing all the informations under the <strong>database</strong> key. This is an example:</p>
+
+<pre class="code ruby"><code>database:
+  adapter: mysql2
+  database: bindloganalyzer
+  host: localhost
+  port: 3306
+  username: root
+  password:  
+</code></pre>
+
+<h2>Automatization</h2>
+
+<p>A good way to use this script is to let it be launched by <strong>logrotate</strong> so create the <em>/etc/logrotate.d/bind</em> file with this content:</p>
+
+<pre class="code ruby"><code>/var/log/named/query.log {
+    weekly
+    missingok
+    rotate 8
+    compress
+    delaycompress
+    notifempty
+    create 644 bind bind
+    postrotate
+        if [ -e /var/log/named/query.log.1 ]; then
+            exec su - YOUR_USER -c '/usr/local/bin/update_bind_log_analyzer.sh /var/log/named/query.log.1'
+        fi
+    endscript
+} 
+</code></pre>
+
+<p>The script <strong>/usr/local/bin/update<em>bind</em>log_analyzer.sh</strong> can be wherever you prefer. Its typical content if you use RVM and a dedicated gemset for <em>BindLogAnalyzer</em>, can be:</p>
+
+<pre class="code ruby"><code>#!/bin/bash
+
+# *************************** #
+#       EDIT THESE VARS       #
+# *************************** #
+BLA_RVM_GEMSET=&quot;1.9.3-p125@bind_log_analyzer&quot;
+BLA_USER=&quot;my_username&quot;
+BLA_DB_FILE=&quot;/etc/bind_log_analyzer/database.yml&quot;
+
+# *************************** #
+# DO NOT EDIT BELOW THIS LINE #
+# *************************** #
+. /home/$BLA_USER/.rvm/scripts/rvm &amp;&amp; source &quot;/home/$BLA_USER/.rvm/scripts/rvm&quot;
+rvm use $BLA_RVM_GEMSET
+bind_log_analyzer --config $BLA_DB_FILE --file $1
+</code></pre>
+
+<h2>To do</h2>
+
+<ul>
+<li>Add a web interface to show the queries (with awesome graphs, obviously :)</li>
+</ul>
+</div></div>
+    
+    <div id="footer">
+  Generated on Tue Apr  3 16:59:15 2012 by 
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.7.5 (ruby-1.9.3).
+</div>
+
+  </body>
+</html>
