@@ -20,30 +20,9 @@ module BindLogAnalyzer
     # @param [true, false] setup_database A flag which indicates whether to launch the database migration
     # @param [Integer] log_level The level of the log requested by the user
     def initialize(database_confs = nil, logfile = nil, setup_database = false, log_level = 0)
-      if database_confs
-        if database_confs.instance_of?(Hash)
-          @database_confs = database_confs
-        else
-          # Load the yaml file
-          if FileTest.exists?(database_confs)
-            @database_confs = YAML::load(File.open(database_confs))['database']
-          else
-            raise BindLogAnalyzer::DatabaseConfsNotValid, "The indicated YAML file doesn't exist or is invalid"
-          end
-        end
-      else
-        # Tries to find the yaml file or prints an error
-        filename = File.join(File.dirname(__FILE__), 'database.yml')
-        if FileTest.exists?(filename)
-            @database_confs = YAML::load(File.open(filename))['database']
-        else
-          raise BindLogAnalyzer::DatabaseConfsNotValid, "Can't find valid database configurations"
-        end
-      end
-      
       @stored_queries = 0
       self.logfile = logfile if logfile
-      setup_db(@database_confs, setup_database, log_level)
+      setup_db(database_confs, setup_database, log_level)
     end
 
     # Sets the path to the log file checking if exists

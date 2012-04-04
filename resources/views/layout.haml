@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+%html(lang="en")
+  %head
+    %meta(charset="utf-8")
+    %title Bind Log Analyzer
+    %link(href="/stylesheets/bootstrap.min.css" media="screen" rel="stylesheet")
+    %link(href="/stylesheets/bootstrap-responsive.min.css" media="screen" rel="stylesheet")
+    %link(href="/stylesheets/main.css" media="screen" rel="stylesheet")
+    %script(src="/javascripts/backbone-min.js")
+    %script(src="/javascripts/bootstrap.min.js")
+  %body
+    .container
+      = haml :navbar, :layout => false
+      = yield

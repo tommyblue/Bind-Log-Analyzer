@@ -1,0 +1,16 @@
+%table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th Date
+      %th Client
+      %th Query
+      %th Type
+      %th Server
+  %tbody
+    - @logs.each do |log|
+      %tr
+        %td= log.date
+        %td= log.client
+        %td= log.query
+        %td= log.q_type
+        %td= log.server
