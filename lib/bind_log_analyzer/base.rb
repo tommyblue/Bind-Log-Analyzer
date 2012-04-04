@@ -10,19 +10,16 @@ module BindLogAnalyzer
     # @attribute [r]
     # @return [String] The file containing the logs to be analyzed
     attr_reader :log_filename
-    # @attribute [r]
-    # @return [Hash] The hash containing the database params and credentials
-    attr_reader :database_confs
     
     # The constructor of BindLogAnalyzer::Base sets some vars and manages the setup of the database
-    # @param [Hash, String] database_confs The path to the database configurations file or a hash containing such informations
+    # @param [Hash, String] database_params The path to the database configurations file or a hash containing such informations
     # @param [String] logfile The path to the file containing the Bind's logs to analyze
     # @param [true, false] setup_database A flag which indicates whether to launch the database migration
     # @param [Integer] log_level The level of the log requested by the user
-    def initialize(database_confs = nil, logfile = nil, setup_database = false, log_level = 0)
+    def initialize(database_params = nil, logfile = nil, setup_database = false, log_level = 0)
       @stored_queries = 0
       self.logfile = logfile if logfile
-      setup_db(database_confs, setup_database, log_level)
+      setup_db(database_params, setup_database, log_level)
     end
 
     # Sets the path to the log file checking if exists

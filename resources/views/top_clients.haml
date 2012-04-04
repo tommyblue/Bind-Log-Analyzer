@@ -1,0 +1,10 @@
+%table.table.table-striped.table-bordered
+  %thead
+    %tr
+      %th Client
+      %th Hits
+  %tbody
+    - @logs.each do |log|
+      %tr
+        %td= log.client
+        %td= log.hits

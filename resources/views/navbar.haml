@@ -1,10 +1,12 @@
-.navbar
+.navbar.navbar-fixed-top
   .navbar-inner
     .container
       %a.brand Bind Log Analyzer
       .nav-collapse
         %ul.nav
-          %li.active
-            %a Home
           %li
-            %a Page
+            %a(href="/") Last 50 queries
+          %li
+            %a(href="/top_queries") Top queries
+          %li
+            %a(href="/top_clients") Top clients

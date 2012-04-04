@@ -23,6 +23,41 @@ module BindLogAnalyzer
       BindLogAnalyzer::Connector.set_log_level(log_level)
     end
 
+    # Launches ActiveRecord migrations
+    def migrate_tables
+      ActiveRecord::Migration.verbose = true
+      migrations_dir = File.join(File.dirname(__FILE__), '..', '..', 'db/migrate')
+      ActiveRecord::Migrator.migrate migrations_dir
+    end
+
+    # Establishes the connection to the database
+    def self.connect
+      ActiveRecord::Base.establish_connection(@database_params)
+    end
+
+    # Shows the status of the connection to the database
+    # @return [true, false] The status of the connection to the database
+    def connected?
+      ActiveRecord::Base.connected?
+    end
+
+    # Loads the ActiveRecord models
+    def load_environment
+      Dir.glob('./lib/models/*').each { |r| require r }
+    end
+
+    # Setups the database params calling #setup_db_confs and log level calling #set_log_level then connects to the database
+    # @param [Hash, String] database_params The path to the database configurations file or a hash containing such informations
+    # @param [String] logfile The path to the file containing the Bind's logs to analyze
+    def self.establish_connection(database_params, log_level)
+      BindLogAnalyzer::Connector.setup_db_confs(database_params)  
+      BindLogAnalyzer::Connector.connect
+      BindLogAnalyzer::Connector.set_log_level(log_level)
+    end
+
+    # Analyzes the database_params param and extracts the database parameters. Raises BindLogAnalyzer::DatabaseConfsNotValid
+    # if it can't find any useful information
+    # @param [Hash, String] database_params The path to the database configurations file or a hash containing such informations
     def self.setup_db_confs(database_params)
       if database_params
         if database_params.instance_of?(Hash)
@@ -46,13 +81,8 @@ module BindLogAnalyzer
       end
     end
 
-    def self.establish_connection(database_params, log_level)
-      BindLogAnalyzer::Connector.setup_db_confs(database_params)
-      
-      BindLogAnalyzer::Connector.connect
-      BindLogAnalyzer::Connector.set_log_level(log_level)
-    end
-
+    # Sets the log level
+    # @param [String] logfile The path to the file containing the Bind's logs to analyze
     def self.set_log_level(log_level)
       if log_level > 0
         
@@ -66,29 +96,6 @@ module BindLogAnalyzer
         log.level = log_level_class[log_level]
         ActiveRecord::Base.logger = log
       end
-    end
-
-    # Launches ActiveRecord migrations
-    def migrate_tables
-      ActiveRecord::Migration.verbose = true
-      migrations_dir = File.join(File.dirname(__FILE__), '..', '..', 'db/migrate')
-      ActiveRecord::Migrator.migrate migrations_dir
-    end
-
-    # Establishes the connection to the database
-    def self.connect
-      ActiveRecord::Base.establish_connection(@database_params)
-    end
-
-    # Shows the status of the connection to the database
-    # @return [true, false] The status of the connection to the database
-    def connected?
-      ActiveRecord::Base.connected?
-    end
-
-    # Loads the ActiveRecord models
-    def load_environment
-      Dir.glob('./lib/models/*').each { |r| require r }
     end
   end
 end

@@ -19,6 +19,18 @@ module BindLogAnalyzer
       haml :index, :layout => :layout
     end
 
+    # Top queries
+    get '/top_queries' do
+      @logs = Log.top_queries
+      haml :top_queries, :layout => :layout
+    end
+
+    # Top clients
+    get '/top_clients' do
+      @logs = Log.top_clients
+      haml :top_clients, :layout => :layout
+    end
+
     get '/pippo' do
       content_type :json
       { :key1 => 'value1', :key2 => 'value2' }.to_json
