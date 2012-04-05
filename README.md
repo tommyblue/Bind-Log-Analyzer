@@ -3,6 +3,8 @@
 Simple analysis and SQL storage for Bind DNS server's logs.
 The gem includes a web interface to analyze the data collected from the analyzed logs.
 
+![Bind Log Analyzer web interface](http://f.cl.ly/items/0A1A173R3b012R1V2x2b/bind_log_analyzer_screenshot_1.jpg)
+
 ## Requirements
 
 This gem was tested with:
