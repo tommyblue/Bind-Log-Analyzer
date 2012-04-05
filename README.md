@@ -137,3 +137,17 @@ On a 1.6 Ghz Intel Core i5 with SSD SATA2 disk, using Ruby-1.9.3-p125 and MySQL 
     bind_log_analyzer -f query.log -c database.yml  322,44s user 22,90s system 76% cpu 7:33,17 total
     
 which is equivalent to ±706 query/sec.
+
+## Changelog
+
+### 0.2.1
+
+If the **-c, --config CONFIG** parameter is not specified, it tries to use a *database.yml* file in the directory from where the gem was launched
+
+### 0.2.0
+
+First version including the web interface
+
+### 0.1.0
+
+First stable version

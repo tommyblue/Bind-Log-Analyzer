@@ -56,7 +56,10 @@
     
     <div id="content"><div id='filecontents'><h1>Bind Log Analyzer</h1>
 
-<p>Simple analysis and SQL storage for Bind DNS server&#39;s logs</p>
+<p>Simple analysis and SQL storage for Bind DNS server&#39;s logs.
+The gem includes a web interface to analyze the data collected from the analyzed logs.</p>
+
+<p><img src="http://f.cl.ly/items/0A1A173R3b012R1V2x2b/bind_log_analyzer_screenshot_1.jpg" alt="Bind Log Analyzer web interface"></p>
 
 <h2>Requirements</h2>
 
@@ -123,8 +126,9 @@ This is the MySQL CREATE TABLE syntax:</p>
 
 <pre class="code ruby"><code>-h, --help                       Display this screen
 -v, --verbose LEVEL              Enables verbose output. Use level 1 for WARN, 2 for INFO and 3 for DEBUG
+-w, --webserver [HTTP_PORT]      Launches the Sinatra web server on specified port, or 4567 if omitted
 -s, --setup                      Creates the needed tables in the database.
--f, --file FILE                  Indicates the log file to parse. It's mandatory.
+-f, --file FILE                  Indicates the log file to parse. It's mandatory if you don't specify the --webserver option.
 -c, --config CONFIG              A yaml file containing the database configurations under the &quot;database&quot; entry
 -a, --adapter ADAPTER            The database name to save the logs
 -d, --database DATABASE          The database name to save the logs
@@ -133,8 +137,6 @@ This is the MySQL CREATE TABLE syntax:</p>
 -u, --user USER                  The username to be used to connect to the database
 -p, --password PASSWORD          The password of the user
 </code></pre>
-
-<p>There&#39;s only one mandatory argument which is <strong>--file FILE</strong>. With this flag you pass the Bind log file to analyze to <em>BindLogAnalyzer</em>.</p>
 
 <p>The first time you launch <em>BindLogAnalyzer</em> you can use the <strong>-s|--setup</strong> flag to make it create the table (using ActiveRecord::Migration).
 The database credentials can be provided using the needed flags or creating a YAML file containing all the informations under the <strong>database</strong> key. This is an example:</p>
@@ -147,6 +149,13 @@ The database credentials can be provided using the needed flags or creating a YA
   username: root
   password:  
 </code></pre>
+
+<p>There are two usage of the gem:</p>
+
+<ul>
+<li>Use <strong>--file FILE</strong> flag to pass to <em>BindLogAnalyzer</em> the file to analyze.</li>
+<li>Use <strong>-w, --webserver [HTTP_PORT]</strong> to start the Sinatra webserver and watch the stats on the collected data.</li>
+</ul>
 
 <h2>Automatization</h2>
 
@@ -198,15 +207,23 @@ bind_log_analyzer -f query.log -c database.yml  322,44s user 22,90s system 76% c
 
 <p>which is equivalent to ±706 query/sec.</p>
 
-<h2>To do</h2>
+<h2>Changelog</h2>
 
-<ul>
-<li>Add a web interface to show the queries (with awesome graphs, obviously :)</li>
-</ul>
+<h3>0.2.1</h3>
+
+<p>If the <strong>-c, --config CONFIG</strong> parameter is not specified, it tries to use a <em>database.yml</em> file in the directory from where the gem was launched</p>
+
+<h3>0.2.0</h3>
+
+<p>First version including the web interface</p>
+
+<h3>0.1.0</h3>
+
+<p>First stable version</p>
 </div></div>
     
     <div id="footer">
-  Generated on Thu Apr  5 16:11:31 2012 by 
+  Generated on Thu Apr  5 16:40:26 2012 by 
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.7.5 (ruby-1.9.3).
 </div>

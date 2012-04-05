@@ -72,7 +72,7 @@ module BindLogAnalyzer
         end
       else
         # Tries to find the yaml file or prints an error
-        filename = File.join(File.dirname(__FILE__), 'database.yml')
+        filename = './database.yml'
         if FileTest.exists?(filename)
             @database_params = YAML::load(File.open(filename))['database']
         else
