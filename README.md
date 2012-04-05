@@ -1,6 +1,7 @@
 # Bind Log Analyzer
 
-Simple analysis and SQL storage for Bind DNS server's logs
+Simple analysis and SQL storage for Bind DNS server's logs.
+The gem includes a web interface to analyze the data collected from the analyzed logs.
 
 ## Requirements
 
@@ -61,8 +62,9 @@ Use the provided --help to get various options available. This is the default he
 
     -h, --help                       Display this screen
     -v, --verbose LEVEL              Enables verbose output. Use level 1 for WARN, 2 for INFO and 3 for DEBUG
+    -w, --webserver [HTTP_PORT]      Launches the Sinatra web server on specified port, or 4567 if omitted
     -s, --setup                      Creates the needed tables in the database.
-    -f, --file FILE                  Indicates the log file to parse. It's mandatory.
+    -f, --file FILE                  Indicates the log file to parse. It's mandatory if you don't specify the --webserver option.
     -c, --config CONFIG              A yaml file containing the database configurations under the "database" entry
     -a, --adapter ADAPTER            The database name to save the logs
     -d, --database DATABASE          The database name to save the logs
@@ -70,8 +72,6 @@ Use the provided --help to get various options available. This is the default he
     -P, --port PORT                  The port of the database
     -u, --user USER                  The username to be used to connect to the database
     -p, --password PASSWORD          The password of the user
-
-There's only one mandatory argument which is **--file FILE**. With this flag you pass the Bind log file to analyze to *BindLogAnalyzer*.
 
 The first time you launch *BindLogAnalyzer* you can use the **-s|--setup** flag to make it create the table (using ActiveRecord::Migration).
 The database credentials can be provided using the needed flags or creating a YAML file containing all the informations under the **database** key. This is an example:
@@ -83,6 +83,11 @@ The database credentials can be provided using the needed flags or creating a YA
       port: 3306
       username: root
       password:  
+
+There are two usage of the gem:
+
+* Use **--file FILE** flag to pass to *BindLogAnalyzer* the file to analyze.
+* Use **-w, --webserver [HTTP_PORT]** to start the Sinatra webserver and watch the stats on the collected data.
 
 ## Automatization
 
@@ -130,7 +135,3 @@ On a 1.6 Ghz Intel Core i5 with SSD SATA2 disk, using Ruby-1.9.3-p125 and MySQL 
     bind_log_analyzer -f query.log -c database.yml  322,44s user 22,90s system 76% cpu 7:33,17 total
     
 which is equivalent to ±706 query/sec.
-
-## To do
-
-- Add a web interface to show the queries (with awesome graphs, obviously :)

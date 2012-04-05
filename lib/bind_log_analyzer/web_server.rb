@@ -19,6 +19,12 @@ module BindLogAnalyzer
       haml :index, :layout => :layout
     end
 
+    # Last 30 queries
+    get '/last_queries' do
+      @logs = Log.limit(30)
+      haml :last_queries, :layout => :layout
+    end
+
     # Top queries
     get '/top_queries' do
       @logs = Log.top_queries
@@ -31,7 +37,7 @@ module BindLogAnalyzer
       haml :top_clients, :layout => :layout
     end
 
-    get '/pippo' do
+    get '/test_json' do
       content_type :json
       { :key1 => 'value1', :key2 => 'value2' }.to_json
     end
