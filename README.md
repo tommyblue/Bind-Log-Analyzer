@@ -140,6 +140,10 @@ which is equivalent to ±706 query/sec.
 
 ## Changelog
 
+### 0.2.2
+
+Added the new BindLogAnalyzer::LogUtils module and the Logger support in various parts of the code
+
 ### 0.2.1
 
 If the **-c, --config CONFIG** parameter is not specified, it tries to use a *database.yml* file in the directory from where the gem was launched
