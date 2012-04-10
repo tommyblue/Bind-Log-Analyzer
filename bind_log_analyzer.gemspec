@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["tommaso.visconti@gmail.com"]
   s.homepage    = "https://github.com/tommyblue/Bind-Log-Analyzer"
   s.summary     = %q{Log analysis and SQL storage for Bind DNS server}
-  s.description = %q{BindLogAnalyzer analyzes a Bind query log file and stores it's data into a SQL database (ActiveRecord is used for this feature)}
+  s.description = %q{BindLogAnalyzer analyzes a Bind query log file and stores its data into a SQL database using ActiveRecord. It provides a fancy web interface to show some query stats and graphs.}
 
   s.rubyforge_project = "bind_log_analyzer"
 
