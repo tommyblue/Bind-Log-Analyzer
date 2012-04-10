@@ -140,6 +140,10 @@ which is equivalent to ±706 query/sec.
 
 ## Changelog
 
+### 0.2.3
+
+Added the -u|--uniqueness flag to check if a record exists in the db before inserting a new one
+
 ### 0.2.2
 
 Added the new BindLogAnalyzer::LogUtils module and the Logger support in various parts of the code
