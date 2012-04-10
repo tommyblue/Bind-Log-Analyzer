@@ -1,10 +1,12 @@
 require 'bind_log_analyzer/exceptions'
+require 'bind_log_analyzer/log_utils'
 require 'bind_log_analyzer/connector'
 require 'models/log'
 
 module BindLogAnalyzer
   # The main class of the BindLogAnalyzer module
   class Base
+    include BindLogAnalyzer::LogUtils
     include BindLogAnalyzer::Connector
 
     # @attribute [r]
@@ -16,16 +18,25 @@ module BindLogAnalyzer
     # @param [String] logfile The path to the file containing the Bind's logs to analyze
     # @param [true, false] setup_database A flag which indicates whether to launch the database migration
     # @param [Integer] log_level The level of the log requested by the user
-    def initialize(database_params = nil, logfile = nil, setup_database = false, log_level = 0)
+    # @param [true, false] check_uniq Checks if a record exists before creating it
+    def initialize(database_params = nil, logfile = nil, setup_database = false, log_level = 0, check_uniq = false)
       @stored_queries = 0
+      @check_uniq = check_uniq
+
+      @log = BindLogAnalyzer::LogUtils.set_log_level(log_level)
+
       self.logfile = logfile if logfile
-      setup_db(database_params, setup_database, log_level)
+      setup_db(database_params, setup_database)
     end
 
     # Sets the path to the log file checking if exists
     # @param [String] logfile The path to the file containing the Bind's logs to analyze
     def logfile=(logfile)
-      @log_filename = logfile if FileTest.exists?(logfile)
+      if FileTest.exists?(logfile)
+        @log_filename = logfile
+      else
+        @log.error = "The provided log file doesn't exist"
+      end
     end
 
     # Returns the path to the Bind's log file
@@ -55,15 +66,30 @@ module BindLogAnalyzer
 
         query
       else
+        @log.error "Can't parse the line: \"#{line}\""
         false
       end
     end
 
-    # Stores the parsed log line into the database. Increments @stored_queries if successful
+    # Stores the parsed log line into the database and increments @stored_queries if successful. 
+    # It checks the uniqueness of a record if the @check_uniq flag is set
     # @param [Hash] query The log line parsed by #parse_line
     def store_query(query)
-      log = Log.new(query)
-      @stored_queries += 1 if log.save
+      if @check_uniq
+        unless Log.where(query)
+          log = Log.new(:date => query[:date])
+          @stored_queries += 1 if log.save
+        else
+          @log.warn "Skipping duplicate entry: #{query}"
+        end
+      else
+        log = Log.new(query)
+        if log.save
+          @stored_queries += 1
+        else
+          @log.error "Error saving the log #{query}"
+        end
+      end
     end
 
     # The main method used to manage the analysis operations.
@@ -74,8 +100,10 @@ module BindLogAnalyzer
       
       lines = 0
       File.new(@log_filename).each do |line|
+        @log.debug "Got line: \"#{line}\""
         query = self.parse_line(line)
         if query
+          @log.debug "Storing line: \"#{query}\""
           self.store_query(query)
           lines += 1
         end

@@ -1,6 +1,5 @@
 require 'bind_log_analyzer/exceptions'
 require 'active_record'
-require 'logger'
 
 module BindLogAnalyzer
   # The module which provides connection facility
@@ -10,9 +9,8 @@ module BindLogAnalyzer
     # loads the Log ActiveRecord model and setups the logger.
     # @param [Hash] database_params The database params and credentials
     # @param [true, false] setup_database If true launches the migrations of the database
-    # @param [Integer] log_level The log level to setup the Logger
-    def setup_db(database_params, setup_database = false, log_level = 0)
-      BindLogAnalyzer::Connector.setup_db_confs(database_params)
+    def setup_db(database_params, setup_database = false)
+      BindLogAnalyzer::Connector.setup_db_confs(database_params, @log)
 
       BindLogAnalyzer::Connector.connect
 
@@ -20,7 +18,7 @@ module BindLogAnalyzer
 
       self.load_environment
 
-      BindLogAnalyzer::Connector.set_log_level(log_level)
+      ActiveRecord::Base.logger = @log
     end
 
     # Launches ActiveRecord migrations
@@ -43,30 +41,36 @@ module BindLogAnalyzer
 
     # Loads the ActiveRecord models
     def load_environment
-      Dir.glob('./lib/models/*').each { |r| require r }
+      Dir.glob('./lib/models/*').each do |r|
+        @log.debug "Requiring model #{r}"
+        require r
+      end
     end
 
     # Setups the database params calling #setup_db_confs and log level calling #set_log_level then connects to the database
     # @param [Hash, String] database_params The path to the database configurations file or a hash containing such informations
     # @param [String] logfile The path to the file containing the Bind's logs to analyze
-    def self.establish_connection(database_params, log_level)
-      BindLogAnalyzer::Connector.setup_db_confs(database_params)  
+    def self.establish_connection(database_params, logger)
+      BindLogAnalyzer::Connector.setup_db_confs(database_params, logger)  
       BindLogAnalyzer::Connector.connect
-      BindLogAnalyzer::Connector.set_log_level(log_level)
+      ActiveRecord::Base.logger = logger
     end
 
     # Analyzes the database_params param and extracts the database parameters. Raises BindLogAnalyzer::DatabaseConfsNotValid
     # if it can't find any useful information
     # @param [Hash, String] database_params The path to the database configurations file or a hash containing such informations
-    def self.setup_db_confs(database_params)
+    def self.setup_db_confs(database_params, logger)
       if database_params
         if database_params.instance_of?(Hash)
+          logger.debug "Setting up database with confs: #{database_params}"
           @database_params = database_params
         else
           # Load the yaml file
           if FileTest.exists?(database_params)
+            logger.debug "Setting up database using file #{database_params}"
             @database_params = YAML::load(File.open(database_params))['database']
           else
+            logger.fatal "The indicated YAML file doesn't exist or is invalid"
             raise BindLogAnalyzer::DatabaseConfsNotValid, "The indicated YAML file doesn't exist or is invalid"
           end
         end
@@ -74,27 +78,12 @@ module BindLogAnalyzer
         # Tries to find the yaml file or prints an error
         filename = './database.yml'
         if FileTest.exists?(filename)
+            logger.info "No database configurations provided, now trying using #{filename}..."
             @database_params = YAML::load(File.open(filename))['database']
         else
+          logger.fatal "Can't find valid database configurations"
           raise BindLogAnalyzer::DatabaseConfsNotValid, "Can't find valid database configurations"
         end
-      end
-    end
-
-    # Sets the log level
-    # @param [String] logfile The path to the file containing the Bind's logs to analyze
-    def self.set_log_level(log_level)
-      if log_level > 0
-        
-        log_level_class = {
-          1 => Logger::WARN,
-          2 => Logger::INFO,
-          3 => Logger::DEBUG
-        }
-
-        log = Logger.new STDOUT
-        log.level = log_level_class[log_level]
-        ActiveRecord::Base.logger = log
       end
     end
   end

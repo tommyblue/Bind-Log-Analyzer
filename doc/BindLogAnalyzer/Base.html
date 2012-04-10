@@ -84,7 +84,7 @@
   
     
       <dt class="r2">Includes:</dt>
-      <dd class="r2"><span class='object_link'><a href="Connector.html" title="BindLogAnalyzer::Connector (module)">Connector</a></span></dd>
+      <dd class="r2"><span class='object_link'><a href="Connector.html" title="BindLogAnalyzer::Connector (module)">Connector</a></span>, <span class='object_link'><a href="LogUtils.html" title="BindLogAnalyzer::LogUtils (module)">LogUtils</a></span></dd>
       
     
   
@@ -179,7 +179,7 @@
         <li class="public ">
   <span class="summary_signature">
     
-      <a href="#initialize-instance_method" title="#initialize (instance method)">- (Base) <strong>initialize</strong>(database_params = nil, logfile = nil, setup_database = false, log_level = 0) </a>
+      <a href="#initialize-instance_method" title="#initialize (instance method)">- (Base) <strong>initialize</strong>(database_params = nil, logfile = nil, setup_database = false, log_level = 0, check_uniq = false) </a>
     
 
     
@@ -288,7 +288,8 @@ setup of the database.</p>
 
   
     <span class="summary_desc"><div class='inline'>
-<p>Stores the parsed log line into the database.</p>
+<p>Stores the parsed log line into the database and increments @stored_queries
+if successful.</p>
 </div></span>
   
 </li>
@@ -306,14 +307,24 @@ setup of the database.</p>
   
   
   <h3 class="inherited">Methods included from <span class='object_link'><a href="Connector.html" title="BindLogAnalyzer::Connector (module)">Connector</a></span></h3>
-  <p class="inherited"><span class='object_link'><a href="Connector.html#connect-class_method" title="BindLogAnalyzer::Connector.connect (method)">connect</a></span>, <span class='object_link'><a href="Connector.html#connected%3F-instance_method" title="BindLogAnalyzer::Connector#connected? (method)">#connected?</a></span>, <span class='object_link'><a href="Connector.html#establish_connection-class_method" title="BindLogAnalyzer::Connector.establish_connection (method)">establish_connection</a></span>, <span class='object_link'><a href="Connector.html#load_environment-instance_method" title="BindLogAnalyzer::Connector#load_environment (method)">#load_environment</a></span>, <span class='object_link'><a href="Connector.html#migrate_tables-instance_method" title="BindLogAnalyzer::Connector#migrate_tables (method)">#migrate_tables</a></span>, <span class='object_link'><a href="Connector.html#set_log_level-class_method" title="BindLogAnalyzer::Connector.set_log_level (method)">set_log_level</a></span>, <span class='object_link'><a href="Connector.html#setup_db-instance_method" title="BindLogAnalyzer::Connector#setup_db (method)">#setup_db</a></span>, <span class='object_link'><a href="Connector.html#setup_db_confs-class_method" title="BindLogAnalyzer::Connector.setup_db_confs (method)">setup_db_confs</a></span></p>
+  <p class="inherited"><span class='object_link'><a href="Connector.html#connect-class_method" title="BindLogAnalyzer::Connector.connect (method)">connect</a></span>, <span class='object_link'><a href="Connector.html#connected%3F-instance_method" title="BindLogAnalyzer::Connector#connected? (method)">#connected?</a></span>, <span class='object_link'><a href="Connector.html#establish_connection-class_method" title="BindLogAnalyzer::Connector.establish_connection (method)">establish_connection</a></span>, <span class='object_link'><a href="Connector.html#load_environment-instance_method" title="BindLogAnalyzer::Connector#load_environment (method)">#load_environment</a></span>, <span class='object_link'><a href="Connector.html#migrate_tables-instance_method" title="BindLogAnalyzer::Connector#migrate_tables (method)">#migrate_tables</a></span>, <span class='object_link'><a href="Connector.html#setup_db-instance_method" title="BindLogAnalyzer::Connector#setup_db (method)">#setup_db</a></span>, <span class='object_link'><a href="Connector.html#setup_db_confs-class_method" title="BindLogAnalyzer::Connector.setup_db_confs (method)">setup_db_confs</a></span></p>
+
+  
+  
+  
+  
+  
+  
+  
+  <h3 class="inherited">Methods included from <span class='object_link'><a href="LogUtils.html" title="BindLogAnalyzer::LogUtils (module)">LogUtils</a></span></h3>
+  <p class="inherited"><span class='object_link'><a href="LogUtils.html#set_log_level-class_method" title="BindLogAnalyzer::LogUtils.set_log_level (method)">set_log_level</a></span></p>
 <div id="constructor_details" class="method_details_list">
   <h2>Constructor Details</h2>
   
     <div class="method_details first">
   <p class="signature first" id="initialize-instance_method">
   
-    - (<tt><span class='object_link'><a href="" title="BindLogAnalyzer::Base (class)">Base</a></span></tt>) <strong>initialize</strong>(database_params = nil, logfile = nil, setup_database = false, log_level = 0) 
+    - (<tt><span class='object_link'><a href="" title="BindLogAnalyzer::Base (class)">Base</a></span></tt>) <strong>initialize</strong>(database_params = nil, logfile = nil, setup_database = false, log_level = 0, check_uniq = false) 
   
 
   
@@ -403,6 +414,24 @@ informations</p>
       
     </li>
   
+    <li>
+      
+        <span class='name'>check_uniq</span>
+      
+      
+        <span class='type'>(<tt>true</tt>, <tt>false</tt>)</span>
+      
+      
+        <em class="default">(defaults to: <tt>false</tt>)</em>
+      
+      
+        &mdash;
+        <div class='inline'>
+<p>Checks if a record exists before creating it</p>
+</div>
+      
+    </li>
+  
 </ul>
 
 
@@ -412,19 +441,27 @@ informations</p>
       <pre class="lines">
 
 
-19
-20
-21
 22
-23</pre>
+23
+24
+25
+26
+27
+28
+29
+30</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 19</span>
+      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 22</span>
 
-<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_database_params'>database_params</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_logfile'>logfile</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_setup_database'>setup_database</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_log_level'>log_level</span> <span class='op'>=</span> <span class='int'>0</span><span class='rparen'>)</span>
+<span class='kw'>def</span> <span class='id identifier rubyid_initialize'>initialize</span><span class='lparen'>(</span><span class='id identifier rubyid_database_params'>database_params</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_logfile'>logfile</span> <span class='op'>=</span> <span class='kw'>nil</span><span class='comma'>,</span> <span class='id identifier rubyid_setup_database'>setup_database</span> <span class='op'>=</span> <span class='kw'>false</span><span class='comma'>,</span> <span class='id identifier rubyid_log_level'>log_level</span> <span class='op'>=</span> <span class='int'>0</span><span class='comma'>,</span> <span class='id identifier rubyid_check_uniq'>check_uniq</span> <span class='op'>=</span> <span class='kw'>false</span><span class='rparen'>)</span>
   <span class='ivar'>@stored_queries</span> <span class='op'>=</span> <span class='int'>0</span>
+  <span class='ivar'>@check_uniq</span> <span class='op'>=</span> <span class='id identifier rubyid_check_uniq'>check_uniq</span>
+
+  <span class='ivar'>@log</span> <span class='op'>=</span> <span class='const'>BindLogAnalyzer</span><span class='op'>::</span><span class='const'>LogUtils</span><span class='period'>.</span><span class='id identifier rubyid_set_log_level'>set_log_level</span><span class='lparen'>(</span><span class='id identifier rubyid_log_level'>log_level</span><span class='rparen'>)</span>
+
   <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_logfile'>logfile</span> <span class='op'>=</span> <span class='id identifier rubyid_logfile'>logfile</span> <span class='kw'>if</span> <span class='id identifier rubyid_logfile'>logfile</span>
-  <span class='id identifier rubyid_setup_db'>setup_db</span><span class='lparen'>(</span><span class='id identifier rubyid_database_params'>database_params</span><span class='comma'>,</span> <span class='id identifier rubyid_setup_database'>setup_database</span><span class='comma'>,</span> <span class='id identifier rubyid_log_level'>log_level</span><span class='rparen'>)</span>
+  <span class='id identifier rubyid_setup_db'>setup_db</span><span class='lparen'>(</span><span class='id identifier rubyid_database_params'>database_params</span><span class='comma'>,</span> <span class='id identifier rubyid_setup_database'>setup_database</span><span class='rparen'>)</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -481,12 +518,12 @@ informations</p>
       <pre class="lines">
 
 
-12
-13
-14</pre>
+14
+15
+16</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 12</span>
+      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 14</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_log_filename'>log_filename</span>
   <span class='ivar'>@log_filename</span>
@@ -546,31 +583,35 @@ and passes wvery line to #parse_line and #store_query</p>
       <pre class="lines">
 
 
-72
-73
-74
-75
-76
-77
-78
-79
-80
-81
-82
-83
-84
-85</pre>
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 72</span>
+      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 98</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_analyze'>analyze</span>
   <span class='kw'>return</span> <span class='kw'>false</span> <span class='kw'>unless</span> <span class='ivar'>@log_filename</span>
   
   <span class='id identifier rubyid_lines'>lines</span> <span class='op'>=</span> <span class='int'>0</span>
   <span class='const'>File</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='ivar'>@log_filename</span><span class='rparen'>)</span><span class='period'>.</span><span class='id identifier rubyid_each'>each</span> <span class='kw'>do</span> <span class='op'>|</span><span class='id identifier rubyid_line'>line</span><span class='op'>|</span>
+    <span class='ivar'>@log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Got line: \&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_line'>line</span><span class='rbrace'>}</span><span class='tstring_content'>\&quot;</span><span class='tstring_end'>&quot;</span></span>
     <span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_parse_line'>parse_line</span><span class='lparen'>(</span><span class='id identifier rubyid_line'>line</span><span class='rparen'>)</span>
     <span class='kw'>if</span> <span class='id identifier rubyid_query'>query</span>
+      <span class='ivar'>@log</span><span class='period'>.</span><span class='id identifier rubyid_debug'>debug</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Storing line: \&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_query'>query</span><span class='rbrace'>}</span><span class='tstring_content'>\&quot;</span><span class='tstring_end'>&quot;</span></span>
       <span class='kw'>self</span><span class='period'>.</span><span class='id identifier rubyid_store_query'>store_query</span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
       <span class='id identifier rubyid_lines'>lines</span> <span class='op'>+=</span> <span class='int'>1</span>
     <span class='kw'>end</span>
@@ -625,12 +666,12 @@ and passes wvery line to #parse_line and #store_query</p>
       <pre class="lines">
 
 
-33
-34
-35</pre>
+44
+45
+46</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 33</span>
+      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 44</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_logfile'>logfile</span>
   <span class='ivar'>@log_filename</span>
@@ -684,15 +725,23 @@ and passes wvery line to #parse_line and #store_query</p>
       <pre class="lines">
 
 
-27
-28
-29</pre>
+34
+35
+36
+37
+38
+39
+40</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 27</span>
+      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 34</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_logfile='>logfile=</span><span class='lparen'>(</span><span class='id identifier rubyid_logfile'>logfile</span><span class='rparen'>)</span>
-  <span class='ivar'>@log_filename</span> <span class='op'>=</span> <span class='id identifier rubyid_logfile'>logfile</span> <span class='kw'>if</span> <span class='const'>FileTest</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_logfile'>logfile</span><span class='rparen'>)</span>
+  <span class='kw'>if</span> <span class='const'>FileTest</span><span class='period'>.</span><span class='id identifier rubyid_exists?'>exists?</span><span class='lparen'>(</span><span class='id identifier rubyid_logfile'>logfile</span><span class='rparen'>)</span>
+    <span class='ivar'>@log_filename</span> <span class='op'>=</span> <span class='id identifier rubyid_logfile'>logfile</span>
+  <span class='kw'>else</span>
+    <span class='ivar'>@log</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='op'>=</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>The provided log file doesn't exist</span><span class='tstring_end'>&quot;</span></span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -761,17 +810,6 @@ and passes wvery line to #parse_line and #store_query</p>
       <pre class="lines">
 
 
-40
-41
-42
-43
-44
-45
-46
-47
-48
-49
-50
 51
 52
 53
@@ -781,10 +819,22 @@ and passes wvery line to #parse_line and #store_query</p>
 57
 58
 59
-60</pre>
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 40</span>
+      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 51</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_parse_line'>parse_line</span><span class='lparen'>(</span><span class='id identifier rubyid_line'>line</span><span class='rparen'>)</span>
   <span class='id identifier rubyid_query'>query</span> <span class='op'>=</span> <span class='lbrace'>{</span><span class='rbrace'>}</span>
@@ -804,6 +854,7 @@ and passes wvery line to #parse_line and #store_query</p>
 
     <span class='id identifier rubyid_query'>query</span>
   <span class='kw'>else</span>
+    <span class='ivar'>@log</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Can't parse the line: \&quot;</span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_line'>line</span><span class='rbrace'>}</span><span class='tstring_content'>\&quot;</span><span class='tstring_end'>&quot;</span></span>
     <span class='kw'>false</span>
   <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
@@ -822,8 +873,9 @@ and passes wvery line to #parse_line and #store_query</p>
 </p><div class="docstring">
   <div class="discussion">
     
-<p>Stores the parsed log line into the database. Increments @stored_queries if
-successful</p>
+<p>Stores the parsed log line into the database and increments @stored_queries
+if successful.  It checks the uniqueness of a record if the @check_uniq
+flag is set</p>
 
 
   </div>
@@ -857,17 +909,43 @@ successful</p>
       <pre class="lines">
 
 
-64
-65
-66
-67</pre>
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93</pre>
     </td>
     <td>
-      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 64</span>
+      <pre class="code"><span class="info file"># File 'lib/bind_log_analyzer/base.rb', line 77</span>
 
 <span class='kw'>def</span> <span class='id identifier rubyid_store_query'>store_query</span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
-  <span class='id identifier rubyid_log'>log</span> <span class='op'>=</span> <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
-  <span class='ivar'>@stored_queries</span> <span class='op'>+=</span> <span class='int'>1</span> <span class='kw'>if</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+  <span class='kw'>if</span> <span class='ivar'>@check_uniq</span>
+    <span class='kw'>unless</span> <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_where'>where</span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
+      <span class='id identifier rubyid_log'>log</span> <span class='op'>=</span> <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='symbol'>:date</span> <span class='op'>=&gt;</span> <span class='id identifier rubyid_query'>query</span><span class='lbracket'>[</span><span class='symbol'>:date</span><span class='rbracket'>]</span><span class='rparen'>)</span>
+      <span class='ivar'>@stored_queries</span> <span class='op'>+=</span> <span class='int'>1</span> <span class='kw'>if</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+    <span class='kw'>else</span>
+      <span class='ivar'>@log</span><span class='period'>.</span><span class='id identifier rubyid_warn'>warn</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Skipping duplicate entry: </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_query'>query</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>else</span>
+    <span class='id identifier rubyid_log'>log</span> <span class='op'>=</span> <span class='const'>Log</span><span class='period'>.</span><span class='id identifier rubyid_new'>new</span><span class='lparen'>(</span><span class='id identifier rubyid_query'>query</span><span class='rparen'>)</span>
+    <span class='kw'>if</span> <span class='id identifier rubyid_log'>log</span><span class='period'>.</span><span class='id identifier rubyid_save'>save</span>
+      <span class='ivar'>@stored_queries</span> <span class='op'>+=</span> <span class='int'>1</span>
+    <span class='kw'>else</span>
+      <span class='ivar'>@log</span><span class='period'>.</span><span class='id identifier rubyid_error'>error</span> <span class='tstring'><span class='tstring_beg'>&quot;</span><span class='tstring_content'>Error saving the log </span><span class='embexpr_beg'>#{</span><span class='id identifier rubyid_query'>query</span><span class='rbrace'>}</span><span class='tstring_end'>&quot;</span></span>
+    <span class='kw'>end</span>
+  <span class='kw'>end</span>
 <span class='kw'>end</span></pre>
     </td>
   </tr>
@@ -879,7 +957,7 @@ successful</p>
 </div>
     
     <div id="footer">
-  Generated on Thu Apr  5 16:40:26 2012 by 
+  Generated on Tue Apr 10 16:12:42 2012 by 
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.7.5 (ruby-1.9.3).
 </div>
