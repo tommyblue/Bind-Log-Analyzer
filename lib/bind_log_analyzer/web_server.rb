@@ -21,7 +21,7 @@ module BindLogAnalyzer
 
     # Last 30 queries
     get '/last_queries' do
-      @logs = Log.limit(30)
+      @logs = Log.order('id DESC').limit(30)
       haml :last_queries, :layout => :layout
     end
 
