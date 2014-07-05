@@ -12,7 +12,7 @@ module BindLogAnalyzer
     # @attribute [r]
     # @return [String] The file containing the logs to be analyzed
     attr_reader :log_filename
-    
+
     # The constructor of BindLogAnalyzer::Base sets some vars and manages the setup of the database
     # @param [Hash, String] database_params The path to the database configurations file or a hash containing such informations
     # @param [String] logfile The path to the file containing the Bind's logs to analyze
@@ -50,14 +50,14 @@ module BindLogAnalyzer
     # @return [Hash, false] The hash containing the parsed line or false if the line couldn't be parsed
     def parse_line(line)
       query = {}
-      regexp = %r{^(\d{2}-\w{3}-\d{4}\s+\d{2}:\d{2}:\d{2}\.\d{3})\s+client\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})#\d+:\s+query:\s+(.*)\s+IN\s+(\w+)\s+\+\s+\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\)$}
-      
+      regexp = %r{^(\d{2}-\w{3}-\d{4}\s+\d{2}:\d{2}:\d{2}\.\d{3})\s+client\s+(\d{,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})#\d+\s+\((.*)\):\s+query:\s+(.*)\s+IN\s+(\w+)\s+\+\s+\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\)$}
+
       parsed_line = line.scan(regexp)
       if parsed_line.size > 0
         # Parse timestamp
         parsed_timestamp = Date._strptime(parsed_line[0][0], "%d-%b-%Y %H:%M:%S.%L")
         query_time = Time.local(parsed_timestamp[:year], parsed_timestamp[:mon], parsed_timestamp[:mday], parsed_timestamp[:hour], parsed_timestamp[:min], parsed_timestamp[:sec], parsed_timestamp[:sec_fraction], parsed_timestamp[:zone])
-        
+
         query[:date]    = query_time
         query[:client]  = parsed_line[0][1]
         query[:query]   = parsed_line[0][2]
@@ -71,7 +71,7 @@ module BindLogAnalyzer
       end
     end
 
-    # Stores the parsed log line into the database and increments @stored_queries if successful. 
+    # Stores the parsed log line into the database and increments @stored_queries if successful.
     # It checks the uniqueness of a record if the @check_uniq flag is set
     # @param [Hash] query The log line parsed by #parse_line
     def store_query(query)
@@ -97,7 +97,7 @@ module BindLogAnalyzer
     # @return [true, false] False if there's a problem with the log file. True elsewhere.
     def analyze
       return false unless @log_filename
-      
+
       lines = 0
       File.new(@log_filename).each do |line|
         @log.debug "Got line: \"#{line}\""
