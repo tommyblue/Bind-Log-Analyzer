@@ -51,7 +51,21 @@ EOF
     expect(@base.logfile).not_to eq('unexisting_test_file')
   end
 
-  it "should correctly parse a line" do
+  it "should correctly parse a Bind log (>= 9.9.x)" do
+    @base = BindLogAnalyzer::Base.new(@db_params, @filename)
+    line = "25-Nov-2015 10:29:53.073 client 192.168.16.7#60458 (host.example.com): query: host.example.com IN A + (192.168.16.1)"
+    test_line = {
+      date: Time.local('2015','Nov',25, 10, 29, 53),
+      client: "192.168.16.7",
+      query: "host.example.com",
+      q_type: "A",
+      server: "192.168.16.1"
+    }
+    parsed_line = @base.parse_line(line)
+    expect(parsed_line).to eq(test_line)
+  end
+
+  it "should correctly parse old Bind versions logs" do
     @base = BindLogAnalyzer::Base.new(@db_params, @filename)
     line = "28-Mar-2012 16:48:32.412 client 192.168.10.201#60303: query: google.com IN AAAA + (192.168.10.1)"
     test_line = {
