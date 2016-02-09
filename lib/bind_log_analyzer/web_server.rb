@@ -9,19 +9,19 @@ module BindLogAnalyzer
 
     set :static, true
     set :public_folder, File.expand_path('../../../resources/assets/', __FILE__)
-  
+
     set :views,  File.expand_path('../../../resources/views/', __FILE__)
     set :haml, { :format => :html5 }
 
     # Root serving Backbone.js
     get '/' do
-      @logs = Log.limit(30)
+      @logs = Log.last_queries
       haml :index, :layout => :layout
     end
 
     # Last 30 queries
     get '/last_queries' do
-      @logs = Log.limit(30)
+      @logs = Log.last_queries
       haml :last_queries, :layout => :layout
     end
 
