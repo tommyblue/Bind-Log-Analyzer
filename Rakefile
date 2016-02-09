@@ -30,7 +30,7 @@ end
 task :build do
   system "gem build bind_log_analyzer.gemspec"
 end
- 
+
 task :release => :build do
   system "gem push pkg/bind_log_analyzer-#{BindLogAnalyzer::VERSION}.gem"
 end
@@ -66,7 +66,7 @@ SQL
       end
     end
   end
- 
+
   task :environment do
     DATABASE_ENV = ENV['DATABASE_ENV'] || 'development'
     MIGRATIONS_DIR = ENV['MIGRATIONS_DIR'] || 'db/migrate'
