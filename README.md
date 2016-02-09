@@ -9,7 +9,7 @@ The gem includes a web interface to analyze the data collected from the analyzed
 
 This gem was tested with:
 
-- ruby-1.9.3-p125
+- ruby-2.1.x
 - rubygem (1.8.15)
 - bundler (1.0.21)
 - activerecord (3.2.2)
@@ -48,15 +48,17 @@ or the regexp will fail :(
 To store the logs you can use every database supported by ActiveRecord. Just create a database and a user with the right privileges. You can provide the -s flag to *BindLogAnalyzer* to make it create the table. Otherwise create it by yourself.
 This is the MySQL CREATE TABLE syntax:
 
-    CREATE TABLE `logs` (
-      `id` int(11) NOT NULL AUTO_INCREMENT,
-      `date` datetime NOT NULL,
-      `client` varchar(255) NOT NULL,
-      `query` varchar(255) NOT NULL,
-      `q_type` varchar(255) NOT NULL,
-      `server` varchar(255) NOT NULL,
-      PRIMARY KEY (`id`)
-    ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+```
+CREATE TABLE `logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` datetime NOT NULL,
+  `client` varchar(255) NOT NULL,
+  `query` varchar(255) NOT NULL,
+  `q_type` varchar(255) NOT NULL,
+  `server` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+```
 
 ## Usage
 
@@ -108,7 +110,7 @@ A good way to use this script is to let it be launched by **logrotate** so creat
                 exec su - YOUR_USER -c '/usr/local/bin/update_bind_log_analyzer.sh /var/log/named/query.log.1'
             fi
         endscript
-    } 
+    }
 
 The script **/usr/local/bin/update_bind_log_analyzer.sh** can be wherever you prefer. Its typical content if you use RVM and a dedicated gemset for *BindLogAnalyzer*, can be:
 
@@ -135,10 +137,40 @@ On a 1.6 Ghz Intel Core i5 with SSD SATA2 disk, using Ruby-1.9.3-p125 and MySQL 
     ~$ time bind_log_analyzer -f query.log -c database.yml   
     Analyzed 319758 lines and correctly stored 319758 logs
     bind_log_analyzer -f query.log -c database.yml  322,44s user 22,90s system 76% cpu 7:33,17 total
-    
+
 which is equivalent to ±706 query/sec.
 
+## Development
+
+First, create a database and add its credentials in the `database.yml` file.
+
+Then create the `logs` table with the following query:
+
+```
+CREATE TABLE `logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `date` datetime NOT NULL,
+  `client` varchar(255) NOT NULL,
+  `query` varchar(255) NOT NULL,
+  `q_type` varchar(255) NOT NULL,
+  `server` varchar(255) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1;
+```
+
+### Run tests
+
+```
+bundle exec rspec
+```
+
 ## Changelog
+
+###0.2.4
+
+Support both old and new Bind log versions
+Add `--bind` option to the cli to bind Sinatra on specified IP
+Fix tests
 
 ### 0.2.3
 
