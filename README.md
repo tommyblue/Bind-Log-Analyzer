@@ -86,7 +86,7 @@ The database credentials can be provided using the needed flags or creating a YA
       host: localhost
       port: 3306
       username: root
-      password:  
+      password:
 
 There are two usage of the gem:
 
@@ -134,7 +134,7 @@ The script **/usr/local/bin/update_bind_log_analyzer.sh** can be wherever you pr
 
 On a 1.6 Ghz Intel Core i5 with SSD SATA2 disk, using Ruby-1.9.3-p125 and MySQL 5.5.15, this is the performance:
 
-    ~$ time bind_log_analyzer -f query.log -c database.yml   
+    ~$ time bind_log_analyzer -f query.log -c database.yml
     Analyzed 319758 lines and correctly stored 319758 logs
     bind_log_analyzer -f query.log -c database.yml  322,44s user 22,90s system 76% cpu 7:33,17 total
 
@@ -170,6 +170,7 @@ bundle exec rspec
 
 Support both old and new Bind log versions
 Add `--bind` option to the cli to bind Sinatra on specified IP
+Reverse the order of the last queries in the GUI
 Fix tests
 
 ### 0.2.3
