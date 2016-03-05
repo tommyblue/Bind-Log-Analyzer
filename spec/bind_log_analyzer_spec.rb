@@ -53,16 +53,33 @@ EOF
 
   it "should correctly parse a Bind log (>= 9.9.x)" do
     @base = BindLogAnalyzer::Base.new(@db_params, @filename)
-    line = "25-Nov-2015 10:29:53.073 client 192.168.16.7#60458 (host.example.com): query: host.example.com IN A + (192.168.16.1)"
-    test_line = {
-      date: Time.local('2015','Nov',25, 10, 29, 53),
-      client: "192.168.16.7",
-      query: "host.example.com",
-      q_type: "A",
-      server: "192.168.16.1"
-    }
-    parsed_line = @base.parse_line(line)
-    expect(parsed_line).to eq(test_line)
+    lines = [
+      {
+        line: "25-Nov-2015 10:29:53.073 client 192.168.16.7#60458 (host.example.com): query: host.example.com IN A + (192.168.16.1)",
+        test_line: {
+          date: Time.local('2015','Nov', 25, 10, 29, 53),
+          client: "192.168.16.7",
+          query: "host.example.com",
+          q_type: "A",
+          server: "192.168.16.1"
+        }
+      },
+      {
+        line: "03-Mar-2016 21:36:47.901 client 192.168.100.105#39709 (cm.g.doubleclick.net): query: cm.g.doubleclick.net IN A + (192.168.100.2)",
+        test_line: {
+          date: Time.local('2016','Mar', 3, 21, 36, 47),
+          client: "192.168.100.105",
+          query: "cm.g.doubleclick.net",
+          q_type: "A",
+          server: "192.168.100.2"
+        }
+      }
+    ]
+
+    lines.each do |obj|
+      parsed_line = @base.parse_line(obj[:line])
+      expect(parsed_line).to eq(obj[:test_line])
+    end
   end
 
   it "should correctly parse old Bind versions logs" do
