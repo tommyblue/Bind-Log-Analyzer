@@ -52,11 +52,16 @@ module BindLogAnalyzer
       query = {}
       regexp =     /^(\d{2}-\w{3}-\d{4}\s+\d{2}:\d{2}:\d{2}\.\d{3})\s+client\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})#\d+\s+\(.+\):\s+query:\s+(.*)\s+IN\s+(\w+)\s+\+\s+\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\)$/
       old_regexp = /^(\d{2}-\w{3}-\d{4}\s+\d{2}:\d{2}:\d{2}\.\d{3})\s+client\s+(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})#\d+:\s+query:\s+(.*)\s+IN\s+(\w+)\s+\+\s+\((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\)$/
+      regexp_ipv6 = /^(\d{2}-\w{3}-\d{4}\s+\d{2}:\d{2}:\d{2}\.\d{3})\s+client\s+([0-9a-fA-F:]+)#\d+\s+\(.+\):\s+query:\s+(.*)\s+IN\s+(\w+)\s+\+\s+\(([0-9a-fA-F:]+)\)$/
+
 
       parsed_line = line.scan(regexp)
       # Try the old version
       if parsed_line.size == 0
         parsed_line = line.scan(old_regexp)
+      end
+      if parsed_line.size == 0
+        parsed_line = line.scan(regexp_ipv6)
       end
 
       if parsed_line.size > 0
